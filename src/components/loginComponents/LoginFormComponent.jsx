@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import requestToken from '../helpers';
 
 class LoginFormComponent extends React.Component {
   constructor() {
@@ -58,14 +60,16 @@ class LoginFormComponent extends React.Component {
             data-testid="input-gravatar-email"
           />
         </label>
-        <button
-          type="button"
-          disabled={ disabled }
-          data-testid="btn-play"
-        >
-          Entrar
-
-        </button>
+        <Link to="/trivia">
+          <button
+            type="button"
+            disabled={ disabled }
+            data-testid="btn-play"
+            onClick={ () => requestToken() }
+          >
+            Jogar
+          </button>
+        </Link>
       </>
     );
   }
