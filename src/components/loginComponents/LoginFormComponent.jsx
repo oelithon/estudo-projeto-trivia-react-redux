@@ -1,5 +1,9 @@
 import React from 'react';
+import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import requestToken from '../helpers/index';
+import { userLogin } from '../../redux/actions';
 
 class LoginFormComponent extends React.Component {
   constructor() {
@@ -13,6 +17,7 @@ class LoginFormComponent extends React.Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleDisabled = this.handleDisabled.bind(this);
+    this.dispatchRequest = this.dispatchRequest.bind(this);
   }
 
   handleChange({ target: { name, value } }) {
@@ -31,6 +36,12 @@ class LoginFormComponent extends React.Component {
         disabled: true,
       });
     }
+  }
+
+  dispatchRequest() {
+    const { loginDispatch } = this.props;
+    loginDispatch(this.state);
+    requestToken();
   }
 
   render() {
@@ -59,21 +70,27 @@ class LoginFormComponent extends React.Component {
             data-testid="input-gravatar-email"
           />
         </label>
-        <button
-          type="button"
-          disabled={ disabled }
-          data-testid="btn-play"
-        >
-          Entrar
-
-        </button>
+        <Link to="/game">
+          <button
+            type="button"
+            disabled={ disabled }
+            data-testid="btn-play"
+            onClick={ () => this.dispatchRequest() }
+          >
+            Jogar
+          </button>
+        </Link>
       </>
     );
   }
 }
 
+LoginFormComponent.propTypes = {
+  loginDispatch: PropTypes.func,
+}.isRequired;
+
 const mapDispatchToProps = (dispatch) => ({
-  loginDispatch: (state) => dispatch(state),
+  loginDispatch: (state) => dispatch(userLogin(state)),
 });
 
 export default connect(null, mapDispatchToProps)(LoginFormComponent);

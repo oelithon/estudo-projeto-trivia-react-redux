@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { PropTypes } from 'prop-types';
+import { connect } from 'react-redux';
 import md5 from 'crypto-js/md5';
 import getGavatarAPI from '../services/gravatarAPI';
 
@@ -25,6 +27,7 @@ class Header extends Component {
   }
 
   render() {
+    const { name } = this.props;
     const { userAvatar } = this.state;
     return (
       <header>
@@ -33,11 +36,19 @@ class Header extends Component {
           data-testid="header-profile-picture"
           alt="Foto de perfil do usuário"
         />
-        <p data-testid="header-player-name">nome do usuário</p>
+        <p data-testid="header-player-name">{ name }</p>
         <p data-testid="header-score">0</p>
       </header>
     );
   }
 }
 
-export default Header;
+Header.propTypes = {
+  name: PropTypes.string,
+}.isRequired;
+
+const mapStateToProps = (state) => ({
+  name: state.user.userInfo.name,
+});
+
+export default connect(mapStateToProps)(Header);
