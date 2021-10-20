@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import requestToken from '../helpers/index';
 import { userLogin } from '../../redux/actions';
+import { Link } from 'react-router-dom';
+import requestToken from '../helpers';
 
 class LoginFormComponent extends React.Component {
   constructor() {
