@@ -18,8 +18,8 @@ class Header extends Component {
   }
 
   async requiredAPI() {
-    const mail = 'elithonsilva@gmail.com';
-    const hash = md5(mail).toString();
+    const { email } = this.props;
+    const hash = md5(email).toString();
     const returnAPI = await getGavatarAPI(hash);
     this.setState({
       userAvatar: returnAPI.url,
@@ -36,7 +36,7 @@ class Header extends Component {
           data-testid="header-profile-picture"
           alt="Foto de perfil do usuário"
         />
-        <p data-testid="header-player-name">{ name }</p>
+        <p data-testid="header-player-name">{name}</p>
         <p data-testid="header-score">0</p>
       </header>
     );
@@ -49,6 +49,7 @@ Header.propTypes = {
 
 const mapStateToProps = (state) => ({
   name: state.user.userInfo.name,
+  email: state.user.userInfo.email,
 });
 
 export default connect(mapStateToProps)(Header);
