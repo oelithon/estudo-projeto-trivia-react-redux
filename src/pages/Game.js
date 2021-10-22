@@ -3,52 +3,39 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import GameComponent from '../components/GameComponent';
 import Header from '../components/Header';
-import { fetchQuestions } from '../redux/actions';
+import { fetchTokenAndQuestions } from '../redux/actions';
 
 class Game extends Component {
-  constructor() {
-    super();
-
-    this.state = {
-      loading: true,
-    };
-
-    this.setLoadingFalse = this.setLoadingFalse.bind(this);
-  }
-
   componentDidMount() {
-    const { dispatch, fetchQuestion } = this.props;
-    dispatch(fetchQuestion());
-    this.setLoadingFalse();
-  }
-
-  setLoadingFalse() {
-    this.setState({
-      loading: false,
-    });
+    const { fetchQuestions } = this.props;
+    fetchQuestions();
   }
 
   render() {
-    const { loading } = this.state;
+    const { loading } = this.props;
+    if (loading) {
+      return <div>Carregando...</div>;
+    }
     return (
       <main>
-        {loading ? 'Carregando...'
-          : (
-            <>
-              <Header userName="Usuário Teste" />
-              <GameComponent />
-            </>)}
+        <Header userName="Usuário Teste" />
+        <GameComponent />
       </main>
     );
   }
 }
 
+const mapStateToProps = (state) => ({
+  loading: state.user.loading,
+});
+
 const mapDispatchToProps = (dispatch) => ({
-  fetchQuestion: () => dispatch(fetchQuestions()) });
+  fetchQuestions: () => dispatch(fetchTokenAndQuestions()),
+});
 
 Game.propTypes = {
-  questions: PropTypes.arrayOf(PropTypes.object),
+  loading: PropTypes.bool,
   fetchQuestions: PropTypes.func,
 }.isRequired;
 
-export default connect(null, mapDispatchToProps)(Game);
+export default connect(mapStateToProps, mapDispatchToProps)(Game);

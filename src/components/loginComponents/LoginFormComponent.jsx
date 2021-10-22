@@ -3,7 +3,7 @@ import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { requestToken } from '../helpers';
-import { userLogin, questionsToState } from '../../redux/actions';
+import { userLogin } from '../../redux/actions';
 
 class LoginFormComponent extends React.Component {
   constructor() {
@@ -91,7 +91,6 @@ LoginFormComponent.propTypes = {
 
 const mapDispatchToProps = (dispatch) => ({
   loginDispatch: (state) => dispatch(userLogin(state)),
-  questionsDispatch: (state) => dispatch(questionsToState(state)),
 });
 
 export default connect(null, mapDispatchToProps)(LoginFormComponent);
