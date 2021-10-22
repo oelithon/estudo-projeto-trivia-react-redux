@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import NextButton from './gameComponents/NextButton';
 
 class GameComponent extends React.Component {
   constructor(props) {
@@ -22,14 +23,27 @@ class GameComponent extends React.Component {
         questionPosition: questionPosition + 1,
       });
     }
+    const correctAnswer = document.querySelector('.correctAnswer');
+    const wrongAnswer = document.querySelectorAll('.wrongAnswer');
+    correctAnswer.style.removeProperty('border');
+    wrongAnswer
+      .forEach((eachWrongAnswer) => this.colorToNone(eachWrongAnswer));
+    const nextBtn = document.querySelector('.btn-next');
+    nextBtn.style.display = 'none';
+  }
+
+  colorToNone(eachAnswer) {
+    eachAnswer.style.removeProperty('border');
   }
 
   handleAnswerColorChange() {
     const correctAnswer = document.querySelector('.correctAnswer');
     const wrongAnswer = document.querySelectorAll('.wrongAnswer');
+    const nextBtn = document.querySelector('.btn-next');
     correctAnswer.style.border = '3px solid rgb(6, 240, 15)';
     wrongAnswer
       .forEach((eachWrongAnswer) => this.changeWrongAnswerColor(eachWrongAnswer));
+    nextBtn.style.display = '';
   }
 
   changeWrongAnswerColor(eachAnswer) {
@@ -76,6 +90,7 @@ class GameComponent extends React.Component {
             </button>
           ))
         }
+        <NextButton onClick={ () => this.handleClick() } />
       </section>
     );
   }
