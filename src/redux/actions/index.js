@@ -31,7 +31,6 @@ export function fetchTokenAndQuestions() {
   };
 }
 
-export const disableButton = (payload) => ({
+export const disableButton = () => ({
   type: DISABLE_BUTTONS,
-  payload,
 });

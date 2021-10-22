@@ -7,7 +7,7 @@ const INNITIAL_STATE = {
 const game = (state = INNITIAL_STATE, action) => {
   switch (action.type) {
   case DISABLE_BUTTONS:
-    return { ...state, statusButton: action.payload };
+    return { ...state, statusButton: true };
   default:
     return state;
   }
