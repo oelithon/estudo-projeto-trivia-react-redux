@@ -8,9 +8,33 @@ class GameComponent extends React.Component {
 
     this.state = {
       questionPosition: 0,
+      seconds: 30,
+      buttonOFF: false,
     };
 
     this.handleClick = this.handleClick.bind(this);
+  }
+
+  componentDidMount() {
+    const oneSecond = 1000;
+
+    this.interval = setInterval(() => {
+      this.setState((prevState) => ({ seconds: prevState.seconds - 1 }));
+    }, oneSecond);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const stopTime = 0;
+    if (prevState.seconds === stopTime) {
+      this.setState({
+        buttonOFF: true,
+        seconds: 30,
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
   }
 
   handleClick() {
@@ -27,7 +51,7 @@ class GameComponent extends React.Component {
   render() {
     const HALF_A_INT = 0.5;
     const { questions, loading } = this.props;
-    const { questionPosition } = this.state;
+    const { questionPosition, seconds, buttonOFF } = this.state;
     console.log(questions);
     const answers = questions
       .reduce((prev, eachAnswers) => (
@@ -43,6 +67,7 @@ class GameComponent extends React.Component {
     }
     return (
       <section>
+        <p>{`Timer: ${seconds}s`}</p>
         <h2 data-testid="question-category">{ questions[questionPosition].category}</h2>
         <h3 data-testid="question-text">{questions[questionPosition].question}</h3>
         {
@@ -55,6 +80,7 @@ class GameComponent extends React.Component {
                   ? 'correct-answer' : `wrong-answer-${index}`
               }
               onClick={ () => this.handleClick() }
+              disabled={ buttonOFF }
             >
               { answer }
             </button>

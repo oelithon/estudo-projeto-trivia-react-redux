@@ -1,6 +1,7 @@
 export const REQUEST_LOGIN = 'REQUEST_LOGIN';
 export const QUESTIONS_TO_STATE = 'QUESTIONS_TO_STATE';
 export const REQUEST_QUESTIONS = 'REQUEST_QUESTIONS';
+export const DISABLE_BUTTONS = 'DISABLE_BUTTONS';
 
 export const userLogin = (payload) => ({
   type: REQUEST_LOGIN,
@@ -29,3 +30,8 @@ export function fetchTokenAndQuestions() {
     dispatch(requestQuestions());
   };
 }
+
+export const disableButton = (payload) => ({
+  type: DISABLE_BUTTONS,
+  payload,
+});
