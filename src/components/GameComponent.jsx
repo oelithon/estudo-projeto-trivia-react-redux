@@ -24,6 +24,18 @@ class GameComponent extends React.Component {
     }
   }
 
+  handleAnswerColorChange() {
+    const correctAnswer = document.querySelector('.correctAnswer');
+    const wrongAnswer = document.querySelectorAll('.wrongAnswer');
+    correctAnswer.style.border = '3px solid rgb(6, 240, 15)';
+    wrongAnswer
+      .forEach((eachWrongAnswer) => this.changeWrongAnswerColor(eachWrongAnswer));
+  }
+
+  changeWrongAnswerColor(eachAnswer) {
+    eachAnswer.style.border = '3px solid rgb(255, 0, 0)';
+  }
+
   render() {
     const HALF_A_INT = 0.5;
     const { questions, loading } = this.props;
@@ -54,7 +66,11 @@ class GameComponent extends React.Component {
                 questions[questionPosition].correct_answer === answer
                   ? 'correct-answer' : `wrong-answer-${index}`
               }
-              onClick={ () => this.handleClick() }
+              className={
+                questions[questionPosition].correct_answer === answer
+                  ? 'correctAnswer' : 'wrongAnswer'
+              }
+              onClick={ () => this.handleAnswerColorChange() }
             >
               { answer }
             </button>
