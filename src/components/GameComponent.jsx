@@ -2,6 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import NextButton from './gameComponents/NextButton';
+import { ableButtons, stopTime } from '../redux/actions';
+import { changeDisplayAndStyle } from './helpers';
 
 class GameComponent extends React.Component {
   constructor(props) {
@@ -14,8 +16,13 @@ class GameComponent extends React.Component {
     this.handleClick = this.handleClick.bind(this);
   }
 
+  componentDidUpdate() {
+    this.nextQuestionWithTimes();
+  }
+
   handleClick() {
     const { questionPosition } = this.state;
+    const { nextBtnDispatch } = this.props;
     const MAX_QUESTIONS_POSITION = 5;
 
     if (questionPosition < MAX_QUESTIONS_POSITION) {
@@ -23,20 +30,12 @@ class GameComponent extends React.Component {
         questionPosition: questionPosition + 1,
       });
     }
-    const correctAnswer = document.querySelector('.correctAnswer');
-    const wrongAnswer = document.querySelectorAll('.wrongAnswer');
-    correctAnswer.style.removeProperty('border');
-    wrongAnswer
-      .forEach((eachWrongAnswer) => this.colorToNone(eachWrongAnswer));
-    const nextBtn = document.querySelector('.btn-next');
-    nextBtn.style.display = 'none';
+    changeDisplayAndStyle();
+    nextBtnDispatch();
   }
 
-  colorToNone(eachAnswer) {
-    eachAnswer.style.removeProperty('border');
-  }
-
-  handleAnswerColorChange() {
+  handleAnswerColorChange(event) {
+    const { clickStopTime } = this.props;
     const correctAnswer = document.querySelector('.correctAnswer');
     const wrongAnswer = document.querySelectorAll('.wrongAnswer');
     const nextBtn = document.querySelector('.btn-next');
@@ -44,6 +43,17 @@ class GameComponent extends React.Component {
     wrongAnswer
       .forEach((eachWrongAnswer) => this.changeWrongAnswerColor(eachWrongAnswer));
     nextBtn.style.display = '';
+    if (event.target.className === 'correctAnswer') {
+      clickStopTime();
+    }
+  }
+
+  nextQuestionWithTimes() {
+    const { statusButton } = this.props;
+    const nextBtn = document.querySelector('.btn-next');
+    if (statusButton) {
+      nextBtn.style.display = '';
+    }
   }
 
   changeWrongAnswerColor(eachAnswer) {
@@ -54,7 +64,6 @@ class GameComponent extends React.Component {
     const HALF_A_INT = 0.5;
     const { questions, loading, statusButton } = this.props;
     const { questionPosition } = this.state;
-    console.log(questions);
     const answers = questions
       .reduce((prev, eachAnswers) => (
         [...prev, [...eachAnswers.incorrect_answers, eachAnswers.correct_answer]]
@@ -84,7 +93,7 @@ class GameComponent extends React.Component {
                 questions[questionPosition].correct_answer === answer
                   ? 'correctAnswer' : 'wrongAnswer'
               }
-              onClick={ () => this.handleAnswerColorChange() }
+              onClick={ (event) => this.handleAnswerColorChange(event) }
               disabled={ statusButton }
             >
               { answer }
@@ -103,9 +112,14 @@ const mapStateToProps = (state) => ({
   statusButton: state.game.statusButton,
 });
 
+const mapDispatchToProps = (dispatch) => ({
+  nextBtnDispatch: (state) => dispatch(ableButtons(state)),
+  clickStopTime: (state) => dispatch(stopTime(state)),
+});
+
 GameComponent.propTypes = {
   questions: PropTypes.arrayOf(PropTypes.object),
   fetchQuestions: PropTypes.func,
 }.isRequired;
 
-export default connect(mapStateToProps)(GameComponent);
+export default connect(mapStateToProps, mapDispatchToProps)(GameComponent);
