@@ -3,7 +3,7 @@ import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 import md5 from 'crypto-js/md5';
 import getGavatarAPI from '../services/gravatarAPI';
-import { disableButton } from '../redux/actions';
+import { disableButton, saveScore, timerToDefault } from '../redux/actions';
 
 class Header extends Component {
   constructor() {
@@ -21,13 +21,30 @@ class Header extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { time } = this.props;
+    const { timerDisableBtn, resetTimer, stopTime, saveTheScore } = this.props;
     const { seconds } = this.state;
-    const stopTime = 1;
-    if (prevState.seconds === stopTime) {
-      time(seconds);
+    const limitTime = 1;
+    if (prevState.seconds === limitTime) {
       clearInterval(this.interval);
+      timerDisableBtn(seconds);
     }
+    if (stopTime) {
+      clearInterval(this.interval);
+      saveTheScore(seconds);
+    }
+    if (resetTimer) {
+      this.resetTimerToThirteen();
+    }
+  }
+
+  resetTimerToThirteen() {
+    const { reset } = this.props;
+    reset();
+    this.setState({
+      seconds: 30,
+    });
+    clearInterval(this.interval);
+    this.updateTimer();
   }
 
   updateTimer() {
@@ -72,10 +89,14 @@ Header.propTypes = {
 const mapStateToProps = (state) => ({
   name: state.user.userInfo.name,
   email: state.user.userInfo.email,
+  resetTimer: state.game.resetTimer,
+  stopTime: state.game.stopTime,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  time: (state) => dispatch(disableButton(state)),
+  timerDisableBtn: (state) => dispatch(disableButton(state)),
+  reset: (state) => dispatch(timerToDefault(state)),
+  saveTheScore: (state) => dispatch(saveScore(state)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

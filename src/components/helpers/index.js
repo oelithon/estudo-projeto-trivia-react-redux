@@ -10,3 +10,17 @@ export async function requestGameApi(token) {
   const json = await response.json();
   return json.results;
 }
+
+function colorToNone(eachAnswer) {
+  eachAnswer.style.removeProperty('border');
+}
+
+export function changeDisplayAndStyle() {
+  const correctAnswer = document.querySelector('.correctAnswer');
+  const wrongAnswer = document.querySelectorAll('.wrongAnswer');
+  correctAnswer.style.removeProperty('border');
+  wrongAnswer
+    .forEach((eachWrongAnswer) => colorToNone(eachWrongAnswer));
+  const nextBtn = document.querySelector('.btn-next');
+  nextBtn.style.display = 'none';
+}

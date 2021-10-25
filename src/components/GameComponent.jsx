@@ -2,6 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import NextButton from './gameComponents/NextButton';
+import { ableButtons, saveDifficulty, stopTime } from '../redux/actions';
+import { changeDisplayAndStyle } from './helpers';
+import history from '../history';
 
 class GameComponent extends React.Component {
   constructor(props) {
@@ -14,8 +17,13 @@ class GameComponent extends React.Component {
     this.handleClick = this.handleClick.bind(this);
   }
 
+  componentDidUpdate() {
+    this.nextQuestionWithTimes();
+  }
+
   handleClick() {
     const { questionPosition } = this.state;
+    const { nextBtnDispatch } = this.props;
     const MAX_QUESTIONS_POSITION = 5;
 
     if (questionPosition < MAX_QUESTIONS_POSITION) {
@@ -23,20 +31,32 @@ class GameComponent extends React.Component {
         questionPosition: questionPosition + 1,
       });
     }
-    const correctAnswer = document.querySelector('.correctAnswer');
-    const wrongAnswer = document.querySelectorAll('.wrongAnswer');
-    correctAnswer.style.removeProperty('border');
-    wrongAnswer
-      .forEach((eachWrongAnswer) => this.colorToNone(eachWrongAnswer));
-    const nextBtn = document.querySelector('.btn-next');
-    nextBtn.style.display = 'none';
+
+    if (questionPosition === (MAX_QUESTIONS_POSITION - 1)) {
+      const { name, score, email } = this.props;
+      localStorage.setItem('state', JSON.stringify({ player:
+        { name,
+          assertions: score.length,
+          score: score
+            .reduce((prev, curr) => prev + curr, 0),
+          gravatarEmail: email,
+        },
+      }));
+      history.push('/score');
+    }
+    changeDisplayAndStyle();
+    nextBtnDispatch();
   }
 
-  colorToNone(eachAnswer) {
-    eachAnswer.style.removeProperty('border');
+  /*
+  sendDifficultyToGlobalState() {
+    const { clickStopTime, questions } = this.props;
+    const { questionPosition } = this.state;
+    const difficultyLevel = this.difficultyLevel(questions[questionPosition].difficulty);
   }
-
-  handleAnswerColorChange() {
+*/
+  handleAnswerColorChange(event) {
+    const { clickStopTime } = this.props;
     const correctAnswer = document.querySelector('.correctAnswer');
     const wrongAnswer = document.querySelectorAll('.wrongAnswer');
     const nextBtn = document.querySelector('.btn-next');
@@ -44,6 +64,30 @@ class GameComponent extends React.Component {
     wrongAnswer
       .forEach((eachWrongAnswer) => this.changeWrongAnswerColor(eachWrongAnswer));
     nextBtn.style.display = '';
+    if (event.target.className === 'correctAnswer') {
+      clickStopTime();
+    }
+  }
+
+  difficultyLevel(difficulty) {
+    const THREE = 3;
+    switch (difficulty) {
+    case 'easy':
+      return 1;
+    case 'medium':
+      return 2;
+    case 'hard':
+      return THREE;
+    default: return 0;
+    }
+  }
+
+  nextQuestionWithTimes() {
+    const { statusButton } = this.props;
+    const nextBtn = document.querySelector('.btn-next');
+    if (statusButton) {
+      nextBtn.style.display = '';
+    }
   }
 
   changeWrongAnswerColor(eachAnswer) {
@@ -54,7 +98,6 @@ class GameComponent extends React.Component {
     const HALF_A_INT = 0.5;
     const { questions, loading, statusButton } = this.props;
     const { questionPosition } = this.state;
-    console.log(questions);
     const answers = questions
       .reduce((prev, eachAnswers) => (
         [...prev, [...eachAnswers.incorrect_answers, eachAnswers.correct_answer]]
@@ -84,7 +127,7 @@ class GameComponent extends React.Component {
                 questions[questionPosition].correct_answer === answer
                   ? 'correctAnswer' : 'wrongAnswer'
               }
-              onClick={ () => this.handleAnswerColorChange() }
+              onClick={ (event) => this.handleAnswerColorChange(event) }
               disabled={ statusButton }
             >
               { answer }
@@ -98,9 +141,18 @@ class GameComponent extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
+  name: state.user.userInfo.name,
+  score: state.game.clickedTimes,
+  email: state.user.userInfo.email,
   questions: state.user.questions,
   loading: state.user.loading,
   statusButton: state.game.statusButton,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  nextBtnDispatch: (state) => dispatch(ableButtons(state)),
+  clickStopTime: (state) => dispatch(stopTime(state)),
+  saveTheDifficulty: (state) => dispatch(saveDifficulty(state)),
 });
 
 GameComponent.propTypes = {
@@ -108,4 +160,4 @@ GameComponent.propTypes = {
   fetchQuestions: PropTypes.func,
 }.isRequired;
 
-export default connect(mapStateToProps)(GameComponent);
+export default connect(mapStateToProps, mapDispatchToProps)(GameComponent);
