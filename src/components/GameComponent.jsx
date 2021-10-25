@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import NextButton from './gameComponents/NextButton';
-import { ableButtons, saveDifficulty, stopTime } from '../redux/actions';
+import { ableButtons, stopTime } from '../redux/actions';
 import { changeDisplayAndStyle } from './helpers';
 import history from '../history';
 
@@ -15,6 +15,7 @@ class GameComponent extends React.Component {
     };
 
     this.handleClick = this.handleClick.bind(this);
+    this.handleAnswerColorChange = this.handleAnswerColorChange.bind(this);
   }
 
   componentDidUpdate() {
@@ -48,15 +49,9 @@ class GameComponent extends React.Component {
     nextBtnDispatch();
   }
 
-  /*
-  sendDifficultyToGlobalState() {
+  handleAnswerColorChange(event) {
     const { clickStopTime, questions } = this.props;
     const { questionPosition } = this.state;
-    const difficultyLevel = this.difficultyLevel(questions[questionPosition].difficulty);
-  }
-*/
-  handleAnswerColorChange(event) {
-    const { clickStopTime } = this.props;
     const correctAnswer = document.querySelector('.correctAnswer');
     const wrongAnswer = document.querySelectorAll('.wrongAnswer');
     const nextBtn = document.querySelector('.btn-next');
@@ -64,8 +59,9 @@ class GameComponent extends React.Component {
     wrongAnswer
       .forEach((eachWrongAnswer) => this.changeWrongAnswerColor(eachWrongAnswer));
     nextBtn.style.display = '';
+    const difficultyLevel = this.difficultyLevel(questions[questionPosition].difficulty);
     if (event.target.className === 'correctAnswer') {
-      clickStopTime();
+      clickStopTime(difficultyLevel);
     }
   }
 
@@ -95,6 +91,7 @@ class GameComponent extends React.Component {
   }
 
   render() {
+    console.log('renderizou');
     const HALF_A_INT = 0.5;
     const { questions, loading, statusButton } = this.props;
     const { questionPosition } = this.state;
@@ -152,7 +149,6 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   nextBtnDispatch: (state) => dispatch(ableButtons(state)),
   clickStopTime: (state) => dispatch(stopTime(state)),
-  saveTheDifficulty: (state) => dispatch(saveDifficulty(state)),
 });
 
 GameComponent.propTypes = {

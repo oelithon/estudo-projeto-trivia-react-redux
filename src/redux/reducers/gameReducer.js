@@ -20,7 +20,7 @@ const game = (state = INNITIAL_STATE, action) => {
   case RESET_TIMER:
     return { ...state, resetTimer: false };
   case STOP_TIME:
-    return { ...state, stopTime: true };
+    return { ...state, stopTime: true, currentDificulty: action.payload };
   case SAVE_DIFFICULTY:
     return { ...state, currentDificulty: action.payload };
   case SAVE_SCORE:
