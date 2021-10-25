@@ -47,8 +47,9 @@ export const timerToDefault = () => ({
   type: RESET_TIMER,
 });
 
-export const stopTime = () => ({
+export const stopTime = (payload) => ({
   type: STOP_TIME,
+  payload,
 });
 
 export const saveScore = (payload) => ({

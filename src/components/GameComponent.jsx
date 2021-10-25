@@ -35,7 +35,8 @@ class GameComponent extends React.Component {
   }
 
   handleAnswerColorChange(event) {
-    const { clickStopTime } = this.props;
+    const { clickStopTime, questions } = this.props;
+    const { questionPosition } = this.state;
     const correctAnswer = document.querySelector('.correctAnswer');
     const wrongAnswer = document.querySelectorAll('.wrongAnswer');
     const nextBtn = document.querySelector('.btn-next');
@@ -44,7 +45,7 @@ class GameComponent extends React.Component {
       .forEach((eachWrongAnswer) => this.changeWrongAnswerColor(eachWrongAnswer));
     nextBtn.style.display = '';
     if (event.target.className === 'correctAnswer') {
-      clickStopTime();
+      clickStopTime(questions[questionPosition].difficulty);
     }
   }
 
