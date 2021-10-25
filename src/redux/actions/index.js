@@ -6,6 +6,7 @@ export const ABLE_BUTTONS = 'ABLE_BUTTONS';
 export const RESET_TIMER = 'RESET_TIMER';
 export const STOP_TIME = 'STOP_TIME';
 export const SAVE_SCORE = 'SAVE_SCORE';
+export const SAVE_DIFFICULTY = 'SAVE_DIFFICULTY';
 
 export const userLogin = (payload) => ({
   type: REQUEST_LOGIN,
@@ -54,5 +55,10 @@ export const stopTime = (payload) => ({
 
 export const saveScore = (payload) => ({
   type: SAVE_SCORE,
+  payload,
+});
+
+export const saveDifficulty = (payload) => ({
+  type: SAVE_DIFFICULTY,
   payload,
 });

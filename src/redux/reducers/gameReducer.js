@@ -1,5 +1,6 @@
 import {
-  DISABLE_BUTTONS, ABLE_BUTTONS, RESET_TIMER, STOP_TIME, SAVE_SCORE } from '../actions';
+  DISABLE_BUTTONS,
+  ABLE_BUTTONS, RESET_TIMER, STOP_TIME, SAVE_SCORE, SAVE_DIFFICULTY } from '../actions';
 
 const INNITIAL_STATE = {
   statusButton: false,
@@ -19,12 +20,14 @@ const game = (state = INNITIAL_STATE, action) => {
   case RESET_TIMER:
     return { ...state, resetTimer: false };
   case STOP_TIME:
-    return { ...state, stopTime: true, currentDificulty: action.payload };
+    return { ...state, stopTime: true };
+  case SAVE_DIFFICULTY:
+    return { ...state, currentDificulty: action.payload };
   case SAVE_SCORE:
     return {
       ...state,
       clickedTimes: [...state.clickedTimes,
-        NUMBER_TEN + action.payload * state.currentDificulty],
+        (NUMBER_TEN + action.payload * state.currentDificulty)],
     };
   default:
     return state;

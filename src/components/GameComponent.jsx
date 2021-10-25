@@ -2,8 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import NextButton from './gameComponents/NextButton';
-import { ableButtons, stopTime } from '../redux/actions';
+import { ableButtons, saveDifficulty, stopTime } from '../redux/actions';
 import { changeDisplayAndStyle } from './helpers';
+import history from '../history';
 
 class GameComponent extends React.Component {
   constructor(props) {
@@ -30,13 +31,32 @@ class GameComponent extends React.Component {
         questionPosition: questionPosition + 1,
       });
     }
+
+    if (questionPosition === (MAX_QUESTIONS_POSITION - 1)) {
+      const { name, score, email } = this.props;
+      localStorage.setItem('state', JSON.stringify({ player:
+        { name,
+          assertions: score.length,
+          score: score
+            .reduce((prev, curr) => prev + curr, 0),
+          gravatarEmail: email,
+        },
+      }));
+      history.push('/score');
+    }
     changeDisplayAndStyle();
     nextBtnDispatch();
   }
 
-  handleAnswerColorChange(event) {
+  /*
+  sendDifficultyToGlobalState() {
     const { clickStopTime, questions } = this.props;
     const { questionPosition } = this.state;
+    const difficultyLevel = this.difficultyLevel(questions[questionPosition].difficulty);
+  }
+*/
+  handleAnswerColorChange(event) {
+    const { clickStopTime } = this.props;
     const correctAnswer = document.querySelector('.correctAnswer');
     const wrongAnswer = document.querySelectorAll('.wrongAnswer');
     const nextBtn = document.querySelector('.btn-next');
@@ -45,7 +65,20 @@ class GameComponent extends React.Component {
       .forEach((eachWrongAnswer) => this.changeWrongAnswerColor(eachWrongAnswer));
     nextBtn.style.display = '';
     if (event.target.className === 'correctAnswer') {
-      clickStopTime(questions[questionPosition].difficulty);
+      clickStopTime();
+    }
+  }
+
+  difficultyLevel(difficulty) {
+    const THREE = 3;
+    switch (difficulty) {
+    case 'easy':
+      return 1;
+    case 'medium':
+      return 2;
+    case 'hard':
+      return THREE;
+    default: return 0;
     }
   }
 
@@ -108,6 +141,9 @@ class GameComponent extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
+  name: state.user.userInfo.name,
+  score: state.game.clickedTimes,
+  email: state.user.userInfo.email,
   questions: state.user.questions,
   loading: state.user.loading,
   statusButton: state.game.statusButton,
@@ -116,6 +152,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   nextBtnDispatch: (state) => dispatch(ableButtons(state)),
   clickStopTime: (state) => dispatch(stopTime(state)),
+  saveTheDifficulty: (state) => dispatch(saveDifficulty(state)),
 });
 
 GameComponent.propTypes = {
