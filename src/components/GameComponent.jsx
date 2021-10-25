@@ -52,7 +52,7 @@ class GameComponent extends React.Component {
 
   render() {
     const HALF_A_INT = 0.5;
-    const { questions, loading } = this.props;
+    const { questions, loading, statusButton } = this.props;
     const { questionPosition } = this.state;
     console.log(questions);
     const answers = questions
@@ -85,6 +85,7 @@ class GameComponent extends React.Component {
                   ? 'correctAnswer' : 'wrongAnswer'
               }
               onClick={ () => this.handleAnswerColorChange() }
+              disabled={ statusButton }
             >
               { answer }
             </button>
@@ -99,6 +100,7 @@ class GameComponent extends React.Component {
 const mapStateToProps = (state) => ({
   questions: state.user.questions,
   loading: state.user.loading,
+  statusButton: state.game.statusButton,
 });
 
 GameComponent.propTypes = {
