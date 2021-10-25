@@ -34,15 +34,6 @@ class GameComponent extends React.Component {
     }
 
     if (questionPosition === (MAX_QUESTIONS_POSITION - 1)) {
-      const { name, score, email } = this.props;
-      localStorage.setItem('state', JSON.stringify({ player:
-        { name,
-          assertions: score.length,
-          score: score
-            .reduce((prev, curr) => prev + curr, 0),
-          gravatarEmail: email,
-        },
-      }));
       history.push('/score');
     }
     changeDisplayAndStyle();
@@ -50,18 +41,49 @@ class GameComponent extends React.Component {
   }
 
   handleAnswerColorChange(event) {
-    const { clickStopTime, questions } = this.props;
+    const { questions } = this.props;
     const { questionPosition } = this.state;
     const correctAnswer = document.querySelector('.correctAnswer');
     const wrongAnswer = document.querySelectorAll('.wrongAnswer');
     const nextBtn = document.querySelector('.btn-next');
+    const timer = document.querySelector('.timer-class').innerHTML;
     correctAnswer.style.border = '3px solid rgb(6, 240, 15)';
     wrongAnswer
       .forEach((eachWrongAnswer) => this.changeWrongAnswerColor(eachWrongAnswer));
     nextBtn.style.display = '';
     const difficultyLevel = this.difficultyLevel(questions[questionPosition].difficulty);
     if (event.target.className === 'correctAnswer') {
-      clickStopTime(difficultyLevel);
+      this.saveLocalStore(timer, difficultyLevel);
+    }
+  }
+
+  saveLocalStore(timer, difficultyLevel) {
+    const { name, email } = this.props;
+    const TEN = 10;
+    const toScore = TEN + (timer * difficultyLevel);
+    const checkState = localStorage.getItem('state');
+    if (!checkState) {
+      localStorage.setItem('state', JSON.stringify({
+        player:
+        {
+          name,
+          assertions: 1,
+          score: toScore,
+          gravatarEmail: email,
+        },
+      }));
+    } else {
+      const currScore = JSON.parse(localStorage.getItem('state')).player.score;
+      const toAssert = JSON.parse(localStorage.getItem('state')).player.assertions;
+      localStorage.setItem('state', JSON.stringify({
+        player:
+      {
+        name,
+        assertions: toAssert + 1,
+        score: currScore + toScore,
+        gravatarEmail: email,
+      },
+      }));
     }
   }
 
@@ -91,7 +113,6 @@ class GameComponent extends React.Component {
   }
 
   render() {
-    console.log('renderizou');
     const HALF_A_INT = 0.5;
     const { questions, loading, statusButton } = this.props;
     const { questionPosition } = this.state;

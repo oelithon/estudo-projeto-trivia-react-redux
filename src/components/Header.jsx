@@ -69,7 +69,7 @@ class Header extends Component {
     const { userAvatar, seconds } = this.state;
     return (
       <header>
-        <p>{`Timer: ${seconds}s`}</p>
+        <p className="timer-class">{seconds}</p>
         <img
           src={ userAvatar }
           data-testid="header-profile-picture"
