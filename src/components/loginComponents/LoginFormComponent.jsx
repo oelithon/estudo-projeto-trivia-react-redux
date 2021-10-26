@@ -40,12 +40,16 @@ class LoginFormComponent extends React.Component {
 
   dispatchRequest() {
     const { loginDispatch } = this.props;
+    const { name, email } = this.state;
     loginDispatch(this.state);
     requestToken();
     localStorage.setItem('state', JSON.stringify({
       player:
       {
+        name,
         score: 0,
+        gravatarEmail: email,
+        assertions: 0,
       },
     }));
   }
