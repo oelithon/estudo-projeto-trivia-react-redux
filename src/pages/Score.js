@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import ScoreComponent from '../components/scoreComponents/ScoreComponent';
 import ScoreHeader from '../components/scoreComponents/ScoreHeader';
+import ButtonRetryAgain from '../components/scoreComponents/ButtonRetryAgain';
 import { fetchImageToHeader } from '../redux/actions';
 
 class Score extends React.Component {
@@ -20,6 +21,7 @@ class Score extends React.Component {
       <section>
         <ScoreHeader />
         <ScoreComponent />
+        <ButtonRetryAgain />
       </section>
     );
   }

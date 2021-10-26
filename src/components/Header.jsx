@@ -67,6 +67,7 @@ class Header extends Component {
   render() {
     const { name } = this.props;
     const { userAvatar, seconds } = this.state;
+    const { score } = JSON.parse(localStorage.getItem('state')).player;
     return (
       <header>
         <p className="timer-class">{seconds}</p>
@@ -76,7 +77,7 @@ class Header extends Component {
           alt="Foto de perfil do usuário"
         />
         <p data-testid="header-player-name">{`Jogador: ${name}`}</p>
-        <p data-testid="header-score">Score: 0</p>
+        <p data-testid="header-score">{`Score: ${score}`}</p>
       </header>
     );
   }

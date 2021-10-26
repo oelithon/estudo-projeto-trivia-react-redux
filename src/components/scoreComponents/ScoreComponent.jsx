@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 
 class ScoreComponent extends React.Component {
   render() {
-    const { score, assertions } = JSON.parse(localStorage.getItem('state')).player;
     const THREE = 3;
+    const ZERO = 0;
+    const { score, assertions } = JSON.parse(localStorage.getItem('state')).player;
     return (
       <section>
         <p data-testid="feedback-text">
@@ -14,10 +14,13 @@ class ScoreComponent extends React.Component {
           }
         </p>
         <p data-testid="feedback-total-score">
-          {`Pontuação: ${score}`}
+          {score}
         </p>
         <p data-testid="feedback-total-question">
-          {`Total de respostas corretas: ${assertions}`}
+          {
+            assertions === ZERO
+              ? 0 : assertions
+          }
         </p>
       </section>
     );
@@ -27,9 +30,5 @@ class ScoreComponent extends React.Component {
 const mapStateToProps = (state) => ({
   name: state.user.userInfo.name,
 });
-
-ScoreComponent.propTypes = {
-  score: PropTypes.arrayOf(PropTypes.number),
-}.isRequired;
 
 export default connect(mapStateToProps)(ScoreComponent);
