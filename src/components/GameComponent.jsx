@@ -63,6 +63,7 @@ class GameComponent extends React.Component {
     const toScore = TEN + (timer * difficultyLevel);
     const checkState = localStorage.getItem('state');
     if (!checkState) {
+      console.log('entrou no primeiro if');
       localStorage.setItem('state', JSON.stringify({
         player:
         {
@@ -73,6 +74,7 @@ class GameComponent extends React.Component {
         },
       }));
     } else {
+      console.log('entrou no segundo if');
       const currScore = JSON.parse(localStorage.getItem('state')).player.score;
       const toAssert = JSON.parse(localStorage.getItem('state')).player.assertions;
       localStorage.setItem('state', JSON.stringify({
