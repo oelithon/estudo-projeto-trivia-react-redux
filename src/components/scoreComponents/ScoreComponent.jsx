@@ -6,6 +6,7 @@ class ScoreComponent extends React.Component {
   render() {
     const { score, assertions } = JSON.parse(localStorage.getItem('state')).player;
     const THREE = 3;
+    const ZERO = 0;
     return (
       <section>
         <p data-testid="feedback-text">
@@ -17,7 +18,10 @@ class ScoreComponent extends React.Component {
           {`Pontuação: ${score}`}
         </p>
         <p data-testid="feedback-total-question">
-          {`Total de respostas corretas: ${assertions}`}
+          {
+            assertions === ZERO
+              ? 'Não acertou nenhuma pergunta' : `Acertou ${assertions} perguntas`
+          }
         </p>
       </section>
     );
