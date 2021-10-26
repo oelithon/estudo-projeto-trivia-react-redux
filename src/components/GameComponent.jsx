@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import NextButton from './gameComponents/NextButton';
-import { ableButtons, saveDifficulty, stopTime } from '../redux/actions';
+import { ableButtons, stopTime } from '../redux/actions';
 import { changeDisplayAndStyle } from './helpers';
 import history from '../history';
 
@@ -15,6 +15,7 @@ class GameComponent extends React.Component {
     };
 
     this.handleClick = this.handleClick.bind(this);
+    this.handleAnswerColorChange = this.handleAnswerColorChange.bind(this);
   }
 
   componentDidUpdate() {
@@ -33,39 +34,58 @@ class GameComponent extends React.Component {
     }
 
     if (questionPosition === (MAX_QUESTIONS_POSITION - 1)) {
-      const { name, score, email } = this.props;
-      localStorage.setItem('state', JSON.stringify({ player:
-        { name,
-          assertions: score.length,
-          score: score
-            .reduce((prev, curr) => prev + curr, 0),
-          gravatarEmail: email,
-        },
-      }));
       history.push('/score');
     }
     changeDisplayAndStyle();
     nextBtnDispatch();
   }
 
-  /*
-  sendDifficultyToGlobalState() {
-    const { clickStopTime, questions } = this.props;
-    const { questionPosition } = this.state;
-    const difficultyLevel = this.difficultyLevel(questions[questionPosition].difficulty);
-  }
-*/
   handleAnswerColorChange(event) {
-    const { clickStopTime } = this.props;
+    const { questions } = this.props;
+    const { questionPosition } = this.state;
     const correctAnswer = document.querySelector('.correctAnswer');
     const wrongAnswer = document.querySelectorAll('.wrongAnswer');
     const nextBtn = document.querySelector('.btn-next');
+    const timer = document.querySelector('.timer-class').innerHTML;
     correctAnswer.style.border = '3px solid rgb(6, 240, 15)';
     wrongAnswer
       .forEach((eachWrongAnswer) => this.changeWrongAnswerColor(eachWrongAnswer));
     nextBtn.style.display = '';
+    const difficultyLevel = this.difficultyLevel(questions[questionPosition].difficulty);
     if (event.target.className === 'correctAnswer') {
-      clickStopTime();
+      this.saveLocalStore(timer, difficultyLevel);
+    }
+  }
+
+  saveLocalStore(timer, difficultyLevel) {
+    const { name, email } = this.props;
+    const TEN = 10;
+    const toScore = TEN + (timer * difficultyLevel);
+    const checkState = localStorage.getItem('state');
+    if (!checkState) {
+      console.log('entrou no primeiro if');
+      localStorage.setItem('state', JSON.stringify({
+        player:
+        {
+          name,
+          assertions: 1,
+          score: toScore,
+          gravatarEmail: email,
+        },
+      }));
+    } else {
+      console.log('entrou no segundo if');
+      const currScore = JSON.parse(localStorage.getItem('state')).player.score;
+      const toAssert = JSON.parse(localStorage.getItem('state')).player.assertions;
+      localStorage.setItem('state', JSON.stringify({
+        player:
+      {
+        name,
+        assertions: toAssert + 1,
+        score: currScore + toScore,
+        gravatarEmail: email,
+      },
+      }));
     }
   }
 
@@ -152,7 +172,6 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   nextBtnDispatch: (state) => dispatch(ableButtons(state)),
   clickStopTime: (state) => dispatch(stopTime(state)),
-  saveTheDifficulty: (state) => dispatch(saveDifficulty(state)),
 });
 
 GameComponent.propTypes = {

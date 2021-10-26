@@ -1,3 +1,6 @@
+import md5 from 'crypto-js/md5';
+import getGavatarAPI from '../../services/gravatarAPI';
+
 export const REQUEST_LOGIN = 'REQUEST_LOGIN';
 export const QUESTIONS_TO_STATE = 'QUESTIONS_TO_STATE';
 export const REQUEST_QUESTIONS = 'REQUEST_QUESTIONS';
@@ -7,6 +10,7 @@ export const RESET_TIMER = 'RESET_TIMER';
 export const STOP_TIME = 'STOP_TIME';
 export const SAVE_SCORE = 'SAVE_SCORE';
 export const SAVE_DIFFICULTY = 'SAVE_DIFFICULTY';
+export const IMAGE_GRAVATAR = 'IMAGE_GRAVATAR';
 
 export const userLogin = (payload) => ({
   type: REQUEST_LOGIN,
@@ -62,3 +66,19 @@ export const saveDifficulty = (payload) => ({
   type: SAVE_DIFFICULTY,
   payload,
 });
+
+export const imageGravatar = (payload) => ({
+  type: IMAGE_GRAVATAR,
+  payload,
+});
+
+export function fetchImageToHeader() {
+  return async (dispatch) => {
+    const { gravatarEmail } = JSON.parse(localStorage.getItem('state')).player;
+    console.log(gravatarEmail);
+    const hash = md5(gravatarEmail).toString();
+    const returnAPI = await getGavatarAPI(hash);
+    dispatch(imageGravatar(returnAPI.url));
+    dispatch(requestQuestions());
+  };
+}

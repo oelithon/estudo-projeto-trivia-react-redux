@@ -4,17 +4,17 @@ import PropTypes from 'prop-types';
 
 class ScoreComponent extends React.Component {
   render() {
-    const { score } = this.props;
+    const { score, assertions } = JSON.parse(localStorage.getItem('state')).player;
     return (
       <section>
-        <p>
-          Sua pontuçao foi de:
-          { ' ' }
-          {
-            score.length > 0
-              ? score.reduce((prev, curr) => prev + curr, 0)
-              : 0
-          }
+        <p data-testid="feedback-text">
+          Oi
+        </p>
+        <p data-testid="feedback-total-score">
+          {`Pontuação: ${score}`}
+        </p>
+        <p data-testid="feedback-total-question">
+          {`Total de respostas corretas: ${assertions}`}
         </p>
       </section>
     );
@@ -23,7 +23,6 @@ class ScoreComponent extends React.Component {
 
 const mapStateToProps = (state) => ({
   name: state.user.userInfo.name,
-  score: state.game.clickedTimes,
 });
 
 ScoreComponent.propTypes = {
