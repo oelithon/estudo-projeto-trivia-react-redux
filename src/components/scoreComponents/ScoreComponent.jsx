@@ -5,10 +5,13 @@ import PropTypes from 'prop-types';
 class ScoreComponent extends React.Component {
   render() {
     const { score, assertions } = JSON.parse(localStorage.getItem('state')).player;
+    const THREE = 3;
     return (
       <section>
         <p data-testid="feedback-text">
-          Oi
+          {
+            assertions >= THREE ? 'Mandou bem!' : 'Podia ser melhor...'
+          }
         </p>
         <p data-testid="feedback-total-score">
           {`Pontuação: ${score}`}
